@@ -12,33 +12,32 @@ class MainActivity : AppCompatActivity() {
     private val viewModel :TeamScoreModel by viewModels()
 
     private lateinit var binding : ActivityMainBinding
-    private  var count = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        count+=viewModel.score
-        binding.textViewScoreCount.text = getString(R.string.score,count)
+
 
         //set the text for the textView
-
+        setScoreText()
 
         binding.buttonAdd4.setOnClickListener {
-            count =  setTheScore(2)
-            binding.textViewScoreCount.text = getString(R.string.score,count)
+increaseScore(binding.buttonAdd4.id)
+            setScoreText()
 
         }
 
         binding.buttonAddOne.setOnClickListener {
-            count = setTheScore(1)
-            binding.textViewScoreCount.text = getString(R.string.score,count)
+           increaseScore(binding.buttonAddOne.id)
+            setScoreText()
 
         }
 
         binding.buttonSubtract2.setOnClickListener {
           if(viewModel.scoreCheck()){
-              count = setTheScore(3)
-              binding.textViewScoreCount.text = getString(R.string.score,count)
+increaseScore(binding.buttonSubtract2.id)
+              setScoreText()
 
 
           }else{
@@ -51,14 +50,13 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setTheScore(theFunNumber: Int):Int{
+    private fun increaseScore(buttonID: Int){
 
-        when(theFunNumber){
-            1->  viewModel.addOneToScore()
-            2 ->  viewModel.addFourToScore()
-            else ->  viewModel.subTwoFromScore()
+        when(buttonID) {
+            binding.buttonAddOne.id -> viewModel.addOneToScore()
+            binding.buttonAdd4.id -> viewModel.addFourToScore()
+            else -> viewModel.subTwoFromScore()
         }
-        return  viewModel.score
 
     }
     private fun showWarningDialog() {
@@ -77,20 +75,21 @@ class MainActivity : AppCompatActivity() {
 
 
     //Exits the App.
-    private fun exitScoreCount() {
-        this.finish()
-    }
+    private fun exitScoreCount() = this.finish()
+
 
    // Re-initializes the data in the ViewModel and updates the views with the new data, to
         // restart the App.
-
     private fun restartScoreCount() {
+       viewModel.reinitializeData()
+       setScoreText()
 
-        viewModel.reinitializeData()
-        count = viewModel.score
-        binding.textViewScoreCount.text = getString(R.string.score,count)
+   }
 
-
+    //set the textView with the new Score
+    private fun setScoreText()  {
+        binding.textViewScoreCount.text = getString(R.string.score, viewModel.score)
     }
+
 
 }
